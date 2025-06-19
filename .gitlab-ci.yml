@@ -1,0 +1,7 @@
+---
+default:
+  tags:
+    - process-ci
+
+include:
+  - local: _configs/_stages.yml
