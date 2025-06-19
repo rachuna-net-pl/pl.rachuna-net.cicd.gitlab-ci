@@ -1,0 +1,42 @@
+---
+default:
+  tags:
+    - process-ci
+
+include:
+  - local: _configs/_rules.yml
+  - local: _configs/_stages.yml
+  - local: _configs/_workflow.yml
+  ### versioning
+  - local: _configs/versioning.yml
+  ### validate
+  - local: _configs/validate.yml
+  - component: $CI_SERVER_FQDN/pl.rachuna-net/cicd/components/build/packer@$COMPONENT_VERSION_BUILD
+    inputs:
+      docker_image: $CONTAINER_IMAGE_PACKER
+  ### unit-test
+  ### build
+  - component: $CI_SERVER_FQDN/pl.rachuna-net/cicd/components/validate/packer@$COMPONENT_VERSION_VALIDATE
+    inputs:
+      docker_image: $CONTAINER_IMAGE_PACKER
+  ### sast
+  - local: _configs/sast.yml
+  ### deploy
+
+
+✅ packer fmt (syntax check):
+  rules: !reference [.rule:validate:packer, rules]
+
+
+✅ packer validate:
+  rules: !reference [.rule:validate:packer, rules]
+
+
+💥 packer build:
+  rules: !reference [.rule:build:packer, rules]
+  cache:
+    key: packer-iso
+    paths:
+      - downloaded_iso_path
+  tags:
+    - process-cd

@@ -1,0 +1,35 @@
+---
+default:
+  tags:
+    - process-ci
+
+include:
+  - local: _configs/_rules.yml
+  - local: _configs/_stages.yml
+  - local: _configs/_workflow.yml
+  ### versioning
+  - local: _configs/versioning.yml
+  ### validate
+  - local: _configs/validate.yml
+  ### sast
+  - local: _configs/sast.yml
+  ### build
+  - component: $CI_SERVER_FQDN/pl.rachuna-net/cicd/components/build/mkdocs@$COMPONENT_VERSION_BUILD
+  ### deploy
+  - component: $CI_SERVER_FQDN/pl.rachuna-net/cicd/components/deploy/pages@$COMPONENT_VERSION_DEPLOY
+
+
+🚀 build mkdocs project:
+  variables:
+    CONTAINER_IMAGE_MKDOCS: $CONTAINER_IMAGE_MKDOCS
+  rules:
+    - when: on_success
+
+
+💿 mkdocs deploy:
+  needs:
+    - job: 🚀 build mkdocs project
+      artifacts: true
+  variables:
+    CONTAINER_IMAGE_PAGES: $CONTAINER_IMAGE_MKDOCS
+  rules: !reference [.rule:deploy:mkdocs, rules]

@@ -1,0 +1,116 @@
+---
+### Validation rules for various CI jobs
+.rule:validate:yamllint:
+  rules:
+    - if: $CI_COMMIT_TAG
+      when: never
+    - if: $CI_COMMIT_BRANCH || $CI_MERGE_REQUEST_ID
+      changes:
+        compare_to: 'refs/heads/main'
+        paths:
+          - "**/*.yml"
+          - "**/*.yaml"
+      when: on_success
+    - when: never
+
+
+.rule:validate:terraform:
+  rules:
+    - if: '$PROJECT_TYPE != "terraform" && $PROJECT_TYPE != "terraform-module"'
+      when: never
+    - if: $CI_COMMIT_TAG
+      when: never
+    - when: on_success
+
+
+.rule:validate:packer:
+  rules:
+    - if: '$PROJECT_TYPE != "packer"'
+      when: never
+    - if: $CI_COMMIT_TAG
+      when: never
+    - when: on_success
+
+
+.rule:validate:molecule:
+  rules:
+    - if: '$PROJECT_TYPE != "ansible-role"'
+      when: never
+    - if: $CI_COMMIT_TAG
+      when: never
+    - when: on_success
+
+## # Unit test rules for various CI jobs
+.rule:unit-test:terraform:
+  rules:
+    - if: '$PROJECT_TYPE != "terraform"'
+      when: never
+    - if: $CI_COMMIT_TAG
+      when: never
+    - when: on_success
+
+# Build rules for various CI jobs
+.rule:build:packer:
+  rules:
+    - if: $PROJECT_TYPE != "packer"
+      when: never
+    - if: $CI_COMMIT_TAG
+      when: never
+    - if: $CI_COMMIT_BRANCH == $CI_DEFAULT_BRANCH
+      when: on_success
+    - if: $CI_OPEN_MERGE_REQUESTS
+      when: manual
+      allow_failure: false
+
+# Publish rules for various CI jobs
+.rule:publish:docker:
+  rules:
+    - if: $PROJECT_TYPE != "container"
+      when: never
+    - if: $CI_COMMIT_TAG
+      when: never
+    - if: $CI_COMMIT_BRANCH == $CI_DEFAULT_BRANCH
+      when: on_success
+    - if: $CI_OPEN_MERGE_REQUESTS
+      when: manual
+      allow_failure: false
+
+
+# Deployment rules for various CI jobs
+.rule:deploy:terraform:
+  rules:
+    - if: $PROJECT_TYPE != "terraform"
+      when: never
+    - if: $CI_COMMIT_TAG
+      when: never
+    - if: $CI_COMMIT_BRANCH == $CI_DEFAULT_BRANCH
+      when: on_success
+    - if: $CI_OPEN_MERGE_REQUESTS
+      when: manual
+      allow_failure: false
+
+
+.rule:deploy:mkdocs:
+  rules:
+    - if: $PROJECT_TYPE != "docs"
+      when: never
+    - if: $CI_COMMIT_TAG
+      when: never
+    - if: $CI_COMMIT_BRANCH == $CI_DEFAULT_BRANCH
+      when: on_success
+    - if: $CI_OPEN_MERGE_REQUESTS
+      when: manual
+      allow_failure: false
+
+
+# Integration test rules for various CI jobs
+.rule:integration-test:docker:
+  rules:
+    - if: $PROJECT_TYPE != "container"
+      when: never
+    - if: $CI_COMMIT_TAG
+      when: never
+    - if: $CI_COMMIT_BRANCH == $CI_DEFAULT_BRANCH
+      when: on_success
+    - if: $CI_OPEN_MERGE_REQUESTS
+      when: on_success

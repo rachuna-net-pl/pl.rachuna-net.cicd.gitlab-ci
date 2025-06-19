@@ -1,7 +1,7 @@
 ---
 # -----------------------------------------------------------------------------
-# This is the default GitLab CI process configuration file.
-# It defines the standard pipeline.
+# This file defines the CI/CD process for GitLab components (gitlab-components)
+# in the pl.rachuna-net project.
 # -----------------------------------------------------------------------------
 
 default:
