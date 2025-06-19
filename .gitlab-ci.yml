@@ -5,3 +5,4 @@ default:
 
 include:
   - local: _configs/_stages.yml
+  - local: _configs/_workflow.yml
