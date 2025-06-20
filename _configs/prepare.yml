@@ -1,0 +1,10 @@
+---
+include:
+  - component: $CI_SERVER_FQDN/pl.rachuna-net/cicd/components/prepare/input_parameters@feat/1
+    inputs:
+      docker_image: $CONTAINER_IMAGE_PYTHON
+
+🔍 input parameters:
+  stage: prepare
+  rules:
+    - when: on_success
