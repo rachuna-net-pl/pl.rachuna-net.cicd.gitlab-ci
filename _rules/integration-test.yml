@@ -1,0 +1,11 @@
+---
+.rule:integration-test:docker:
+  rules:
+    - if: $PROJECT_TYPE != "container"
+      when: never
+    - if: $CI_COMMIT_TAG
+      when: never
+    - if: $CI_COMMIT_BRANCH == $CI_DEFAULT_BRANCH
+      when: on_success
+    - if: $CI_OPEN_MERGE_REQUESTS
+      when: on_success
