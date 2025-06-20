@@ -1,0 +1,8 @@
+---
+.rule:unit-test:terraform:
+  rules:
+    - if: '$PROJECT_TYPE != "terraform"'
+      when: never
+    - if: $CI_COMMIT_TAG
+      when: never
+    - when: on_success
