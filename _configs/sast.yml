@@ -1,0 +1,23 @@
+---
+include:
+  - component: $CI_SERVER_FQDN/pl.rachuna-net/cicd/components/sast/sonarqube@$COMPONENT_VERSION_SAST
+    inputs:
+      docker_image: $CONTAINER_IMAGE_SONAR_SCANNER
+
+
+💪 sonarqube scanner:
+  needs:
+    - job: 🕵 Set Version
+      artifacts: true
+  variables:
+    SONAR_PROJECT_KEY: $SONARQUBE_CLOUD_PROJECT_ID
+    SONAR_PROJECT_VERSION: $RELEASE_CANDIDATE_VERSION
+  rules:
+    - if: $IS_ENABLED_SONARQUBE != "true"
+      when: never
+    - if: $CI_COMMIT_TAG
+      when: never
+    - if: $CI_COMMIT_BRANCH == $CI_DEFAULT_BRANCH
+      when: on_success
+    - if: $CI_OPEN_MERGE_REQUESTS
+      when: on_success

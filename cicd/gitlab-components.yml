@@ -1,0 +1,19 @@
+---
+# -----------------------------------------------------------------------------
+# This file defines the CI/CD process for GitLab components (gitlab-components)
+# in the pl.rachuna-net project.
+# -----------------------------------------------------------------------------
+
+default:
+  tags:
+    - process-ci
+
+include:
+  - local: _configs/_stages.yml
+  - local: _configs/_workflow.yml
+  ### validate
+  - local: _configs/validate.yml
+  ### release
+  - local: _configs/release.yml
+  ### sast
+  - local: _configs/sast.yml

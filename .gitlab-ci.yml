@@ -1,0 +1,19 @@
+---
+# -----------------------------------------------------------------------------
+# This is the default GitLab CI process configuration file.
+# It defines the standard pipeline.
+# -----------------------------------------------------------------------------
+
+default:
+  tags:
+    - process-ci
+
+include:
+  - local: _configs/_stages.yml
+  - local: _configs/_workflow.yml
+  ### validate
+  - local: _configs/validate.yml
+  ### release
+  - local: _configs/release.yml
+  ### sast
+  - local: _configs/sast.yml

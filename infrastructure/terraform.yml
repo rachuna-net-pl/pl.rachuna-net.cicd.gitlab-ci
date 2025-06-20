@@ -1,0 +1,42 @@
+---
+default:
+  tags:
+    - process-ci
+
+include:
+  - local: _configs/_rules.yml
+  - local: _configs/_stages.yml
+  - local: _configs/_workflow.yml
+  ### versioning
+  - local: _configs/versioning.yml
+  ### validate
+  - local: _configs/validate.yml
+  - component: $CI_SERVER_FQDN/pl.rachuna-net/cicd/components/validate/terraform@$COMPONENT_VERSION_VALIDATE
+    inputs:
+      docker_image: $CONTAINER_IMAGE_TERRAFORM
+  ### unit-test
+  - component: $CI_SERVER_FQDN/pl.rachuna-net/cicd/components/unit-test/terraform@$COMPONENT_VERSION_UNIT_TEST
+    inputs:
+      docker_image: $CONTAINER_IMAGE_TERRAFORM
+  ### sast
+  # - local: _configs/sast.yml
+  ### deploy
+  - component: $CI_SERVER_FQDN/pl.rachuna-net/cicd/components/deploy/terraform@$COMPONENT_VERSION_DEPLOY
+    inputs:
+      docker_image: $CONTAINER_IMAGE_TERRAFORM
+
+
+✅ terraform validate:
+  rules: !reference [.rule:validate:terraform, rules]
+
+
+🕵 terraform fmt:
+  rules: !reference [.rule:validate:terraform, rules]
+
+
+🧪 terraform plan:
+  rules: !reference [.rule:unit-test:terraform, rules]
+
+
+💥 terraform apply:
+  rules: !reference [.rule:deploy:terraform, rules]
