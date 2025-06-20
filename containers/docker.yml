@@ -9,6 +9,8 @@ include:
   - local: _configs/_stages.yml
   - local: _configs/_workflow.yml
   ### validate
+  - local: _configs/prepare.yml
+  ### validate
   - local: _configs/validate.yml
   ### sast
   - local: _configs/sast.yml

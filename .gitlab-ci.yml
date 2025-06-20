@@ -11,6 +11,8 @@ default:
 include:
   - local: _configs/_stages.yml
   - local: _configs/_workflow.yml
+  ### prepare
+  - local: _configs/prepare.yml
   ### validate
   - local: _configs/validate.yml
   ### release

@@ -4,18 +4,20 @@ default:
     - process-ci
 
 include:
-  - local: _configs/_rules.yml
   - local: _configs/_stages.yml
   - local: _configs/_workflow.yml
-  ### versioning
-  - local: _configs/versioning.yml
+  ### prepare
+  - local: _configs/prepare.yml
   ### validate
   - local: _configs/validate.yml
   ### sast
   - local: _configs/sast.yml
   ### build
   - component: $CI_SERVER_FQDN/pl.rachuna-net/cicd/components/build/mkdocs@$COMPONENT_VERSION_BUILD
+  ### release
+  - local: _configs/release.yml
   ### deploy
+  - local: _rules/deploy.yml
   - component: $CI_SERVER_FQDN/pl.rachuna-net/cicd/components/deploy/pages@$COMPONENT_VERSION_DEPLOY
 
 
