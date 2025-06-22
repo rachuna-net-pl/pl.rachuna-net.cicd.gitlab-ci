@@ -1,26 +1,32 @@
 ---
+# -----------------------------------------------------------------------------
+# This is the central CI/CD process for Packer integrated with Proxmox.
+# -----------------------------------------------------------------------------
 default:
   tags:
     - process-ci
 
 include:
-  - local: _configs/_rules.yml
   - local: _configs/_stages.yml
   - local: _configs/_workflow.yml
-  ### versioning
-  - local: _configs/versioning.yml
+  ### prepare
+  - local: _configs/prepare.yml
   ### validate
   - local: _configs/validate.yml
-  - component: $CI_SERVER_FQDN/pl.rachuna-net/cicd/components/build/packer@$COMPONENT_VERSION_BUILD
+  - component: $CI_SERVER_FQDN/pl.rachuna-net/cicd/components/validate/packer@$COMPONENT_VERSION_VALIDATE
+  - component: $CI_SERVER_FQDN/pl.rachuna-net/cicd/components/validate/packer@main
     inputs:
       docker_image: $CONTAINER_IMAGE_PACKER
   ### unit-test
-  ### build
-  - component: $CI_SERVER_FQDN/pl.rachuna-net/cicd/components/validate/packer@$COMPONENT_VERSION_VALIDATE
-    inputs:
-      docker_image: $CONTAINER_IMAGE_PACKER
   ### sast
   - local: _configs/sast.yml
+  ### build
+  - local: _rules/build.yml
+  - component: $CI_SERVER_FQDN/pl.rachuna-net/cicd/components/build/packer@$COMPONENT_VERSION_BUILD
+    inputs:
+      docker_image: $CONTAINER_IMAGE_PACKER
+  ### release
+  - local: _configs/release.yml
   ### deploy
 
 

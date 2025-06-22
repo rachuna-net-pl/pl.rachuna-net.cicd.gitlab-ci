@@ -1,4 +1,7 @@
 ---
+# -----------------------------------------------------------------------------
+# This is the central CI/CD process for publish gitlab pages using MkDocs.
+# -----------------------------------------------------------------------------
 default:
   tags:
     - process-ci
@@ -30,6 +33,7 @@ include:
 
 💿 mkdocs deploy:
   needs:
+    - job: 📍 Publish Version
     - job: 🚀 build mkdocs project
       artifacts: true
   variables:
