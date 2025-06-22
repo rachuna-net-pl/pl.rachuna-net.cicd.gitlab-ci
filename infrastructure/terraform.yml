@@ -1,4 +1,7 @@
 ---
+# -----------------------------------------------------------------------------
+# This is the central CI/CD process for Terraform and Terraform modules.
+# -----------------------------------------------------------------------------
 default:
   tags:
     - process-ci
@@ -6,17 +9,16 @@ default:
 include:
   - local: _configs/_stages.yml
   - local: _configs/_workflow.yml
-  - local: _rules/validate.yml
-  - local: _rules/unit-test.yml
-  - local: _rules/deploy.yml
-  ### validate
+  ### prepare
   - local: _configs/prepare.yml
   ### validate
+  - local: _rules/validate.yml
   - local: _configs/validate.yml
   - component: $CI_SERVER_FQDN/pl.rachuna-net/cicd/components/validate/terraform@$COMPONENT_VERSION_VALIDATE
     inputs:
       docker_image: $CONTAINER_IMAGE_TERRAFORM
   ### unit-test
+  - local: _rules/unit-test.yml
   - component: $CI_SERVER_FQDN/pl.rachuna-net/cicd/components/unit-test/terraform@$COMPONENT_VERSION_UNIT_TEST
     inputs:
       docker_image: $CONTAINER_IMAGE_TERRAFORM
@@ -25,6 +27,7 @@ include:
   ### release
   - local: _configs/release.yml
   ### deploy
+  - local: _rules/deploy.yml
   - component: $CI_SERVER_FQDN/pl.rachuna-net/cicd/components/deploy/terraform@$COMPONENT_VERSION_DEPLOY
     inputs:
       docker_image: $CONTAINER_IMAGE_TERRAFORM

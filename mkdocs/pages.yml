@@ -1,4 +1,7 @@
 ---
+# -----------------------------------------------------------------------------
+# This is the central CI/CD process for publish gitlab pages using MkDocs.
+# -----------------------------------------------------------------------------
 default:
   tags:
     - process-ci
@@ -18,7 +21,7 @@ include:
   - local: _configs/release.yml
   ### deploy
   - local: _rules/deploy.yml
-  - component: $CI_SERVER_FQDN/pl.rachuna-net/cicd/components/deploy/pages@$COMPONENT_VERSION_DEPLOY
+  - component: $CI_SERVER_FQDN/pl.rachuna-net/cicd/components/deploy/mkdocs@$COMPONENT_VERSION_DEPLOY
 
 
 🚀 build mkdocs project:
@@ -30,6 +33,7 @@ include:
 
 💿 mkdocs deploy:
   needs:
+    - job: 📍 Publish Version
     - job: 🚀 build mkdocs project
       artifacts: true
   variables:
