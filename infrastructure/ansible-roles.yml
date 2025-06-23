@@ -1,25 +1,31 @@
 ---
+# -----------------------------------------------------------------------------
+# This is the central CI/CD process for Ansible Roles.
+# -----------------------------------------------------------------------------
 default:
   tags:
     - process-ci
 
 include:
-  - local: _configs/_rules.yml
   - local: _configs/_stages.yml
   - local: _configs/_workflow.yml
-  ### versioning
-  - local: _configs/versioning.yml
+  ### prepare
+  - local: _configs/prepare.yml
   ### validate
+  - local: _rules/validate.yml
   - local: _configs/validate.yml
   ### unit-test
+  - local: _rules/unit-test.yml
   - component: $CI_SERVER_FQDN/pl.rachuna-net/cicd/components/unit-test/molecule@$COMPONENT_VERSION_UNIT_TEST
     inputs:
       docker_image: $CONTAINER_IMAGE_ANSIBLE
   ### build
   ### sast
   - local: _configs/sast.yml
+  ### release
+  - local: _configs/release.yml
   ### deploy
 
 
 🧪 molecule test:
-  rules: !reference [.rule:validate:molecule, rules]
+  rules: !reference [.rule:unit-test:molecule, rules]
