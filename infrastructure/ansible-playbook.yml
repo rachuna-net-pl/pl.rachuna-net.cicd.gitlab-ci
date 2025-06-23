@@ -1,15 +1,18 @@
 ---
+# -----------------------------------------------------------------------------
+# This is the central CI/CD process for Ansible Playbooks.
+# -----------------------------------------------------------------------------
 default:
   tags:
     - process-ci
 
 include:
-  - local: _configs/_rules.yml
   - local: _configs/_stages.yml
   - local: _configs/_workflow.yml
-  ### versioning
-  - local: _configs/versioning.yml
+  ### prepare
+  - local: _configs/prepare.yml
   ### validate
+  - local: _rules/validate.yml
   - local: _configs/validate.yml
   - component: $CI_SERVER_FQDN/pl.rachuna-net/cicd/components/validate/ansible@$COMPONENT_VERSION_VALIDATE
     inputs:
@@ -19,30 +22,17 @@ include:
   ### build
   ### sast
   - local: _configs/sast.yml
+  ### release
+  - local: _configs/release.yml
   ### deploy
+  - local: _rules/deploy.yml
   - component: $CI_SERVER_FQDN/pl.rachuna-net/cicd/components/deploy/ansible@$COMPONENT_VERSION_DEPLOY
     inputs:
       docker_image: $CONTAINER_IMAGE_ANSIBLE
       ansible_inventory: inventory/hosts.yml
 
 ✅ ansible-playbook check:
-  rules:
-    - if: '$PROJECT_TYPE != "ansible-playbook"'
-      when: never
-    - if: $CI_COMMIT_TAG
-      when: never
-    - when: on_success
-
+  rules: !reference [.role:validate:ansible, rules]
 
 💥 ansible playbook:
-  # rules: !reference [.rule:validate:molecule, rules]
-  rules:
-    - if: $PROJECT_TYPE != "ansible-playbook"
-      when: never
-    - if: $CI_COMMIT_TAG
-      when: never
-    - if: $CI_COMMIT_BRANCH == $CI_DEFAULT_BRANCH
-      when: on_success
-    - if: $CI_OPEN_MERGE_REQUESTS
-      when: manual
-      allow_failure: false
+  rules: !reference [.rule:deploy:ansible, rules]
