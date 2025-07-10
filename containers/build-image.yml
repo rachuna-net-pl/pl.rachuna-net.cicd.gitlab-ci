@@ -1,0 +1,47 @@
+---
+default:
+  tags:
+    - process-ci
+
+include:
+  - local: _rules/publish.yml
+  - local: _rules/integration-test.yml
+  - local: _configs/_stages.yml
+  - local: _configs/_workflow.yml
+  ### validate
+  - local: _configs/prepare.yml
+  ### validate
+  # - local: _configs/validate.yml
+  # ### sast
+  # - local: _configs/sast.yml
+  ### build
+  - component: $CI_SERVER_FQDN/pl.rachuna-net/cicd/components/build/builder-image@feat/215
+    inputs:
+      docker_image: registry.gitlab.com/pl.rachuna-net/containers/buildah:1.0.0-92059c8c
+  ### publish
+  # - component: $CI_SERVER_FQDN/pl.rachuna-net/cicd/components/publish/docker@$COMPONENT_VERSION_PUBLISH
+  #   inputs:
+  #     docker_image: $CONTAINER_IMAGE_BUILD
+  ### release
+  - local: _configs/release.yml
+  ### integration-test
+  - component: $CI_SERVER_FQDN/pl.rachuna-net/cicd/components/integration-test/docker@$COMPONENT_VERSION_INTEGRATION_TEST
+
+
+# 🌐 publish docker image:
+#   needs:
+#     - job: 🕵 Set Version
+#       artifacts: true
+#   variables:
+#     CONTAINER_VERSION: $RELEASE_CANDIDATE_VERSION
+#   rules: !reference [.rule:publish:docker, rules]
+
+
+# 🧪 test docker image:
+#   needs:
+#     - job: 🕵 Set Version
+#       artifacts: true
+#     - job: 🌐 publish docker image
+#   variables:
+#     CONTAINER_IMAGE_DOCKER: $CI_REGISTRY_IMAGE:$RELEASE_CANDIDATE_VERSION
+#   rules: !reference [.rule:integration-test:docker, rules]
