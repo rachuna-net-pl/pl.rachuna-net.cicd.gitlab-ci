@@ -1,5 +1,5 @@
 ::include{file=.gitlab/badges.md}
-# ![](https://gitlab.com/pl.rachuna-net/infrastructure/terraform/modules/gitlab-project/-/raw/main/images/gitlab.png){height=20px} Procesy CI/CD dla projektów w grupie pl.rachuna-net
+# ![](https://gitlab.com/pl.rachuna-net/infrastructure/terraform/iac-gitlab/-/raw/main/images/project/gitlab.png){height=20px} Procesy CI/CD dla projektów w grupie pl.rachuna-net
 
 Procesy do ciągłej integracji i dostarczania (CI/CD) dla projektów w grupie pl.rachuna-net
 

@@ -4,7 +4,16 @@ include:
     inputs:
       docker_image: $CONTAINER_IMAGE_PYTHON
 
-🔍 input parameters:
+  - component: $CI_SERVER_FQDN/pl.rachuna-net/cicd/components/prepare/conventional_commits@feat/217
+    inputs:
+      docker_image: $CONTAINER_IMAGE_PYTHON
+
+🔍 Input Parameters:
+  stage: prepare
+  rules:
+    - when: on_success
+
+🔍 Analyze Conventional Commits:
   stage: prepare
   rules:
     - when: on_success
