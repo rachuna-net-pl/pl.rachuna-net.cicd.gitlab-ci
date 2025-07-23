@@ -1,7 +1,7 @@
 ---
 # -----------------------------------------------------------------------------
-# This is the default GitLab CI process configuration file.
-# It defines the standard pipeline.
+# Default GitLab CI configuration.
+# Defines the standard pipeline.
 # -----------------------------------------------------------------------------
 
 default:

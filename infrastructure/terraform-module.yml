@@ -27,11 +27,6 @@ include:
   - local: _configs/sast.yml
   ### release
   - local: _configs/release.yml
-  ### deploy
-  - local: _rules/deploy.yml
-  - component: $CI_SERVER_FQDN/pl.rachuna-net/cicd/components/deploy/terraform@$COMPONENT_VERSION_DEPLOY
-    inputs:
-      docker_image: $CONTAINER_IMAGE_TERRAFORM
 
 
 ✅ terraform validate:
@@ -42,15 +37,9 @@ include:
   rules: !reference [.rule:validate:terraform, rules]
 
 
-🕵 terraform fmt:
+✅ terraform-docs:
   rules: !reference [.rule:validate:terraform, rules]
 
 
-🧪 terraform plan:
-  rules: !reference [.rule:unit-test:terraform, rules]
-
-
-💥 terraform apply:
-  needs:
-    - job: 🧪 terraform plan
-  rules: !reference [.rule:deploy:terraform, rules]
+🕵 terraform fmt:
+  rules: !reference [.rule:validate:terraform, rules]
