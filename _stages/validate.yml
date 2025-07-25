@@ -4,3 +4,6 @@ include:
   - component: $CI_SERVER_FQDN/pl.rachuna-net/cicd/components/validate/yamllint@$COMPONENT_VERSION_VALIDATE
     inputs:
       docker_image: $CONTAINER_IMAGE_PYTHON
+  - component: $CI_SERVER_FQDN/pl.rachuna-net/cicd/components/validate/terraform@$COMPONENT_VERSION_VALIDATE
+    inputs:
+      docker_image: $CONTAINER_IMAGE_TERRAFORM
