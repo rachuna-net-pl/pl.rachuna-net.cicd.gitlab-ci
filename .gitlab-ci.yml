@@ -9,13 +9,71 @@ default:
     - process-ci
 
 include:
-  - local: _configs/_stages.yml
+  - local: _stages/_definitions.yml
   - local: _configs/_workflow.yml
   ### prepare
-  - local: _configs/prepare.yml
+  - local: _stages/prepare.yml
   ### validate
-  - local: _configs/validate.yml
-  ### release
-  - local: _configs/release.yml
+  - local: _stages/validate.yml
   ### sast
-  - local: _configs/sast.yml
+  - local: _stages/sast.yml
+  ### release
+  - local: _stages/release.yml
+
+
+🕵 Set Version:
+  stage: prepare
+  rules:
+    - when: on_success
+
+
+🔍 Input Parameters:
+  stage: prepare
+  rules:
+    - when: on_success
+
+
+🔍 Analyze Conventional Commits:
+  stage: prepare
+  rules:
+    - when: on_success
+
+
+🕵 YAML lint:
+  stage: validate
+  rules: !reference [.rule:validate:yamllint, rules]
+
+
+💪 sonarqube scanner:
+  needs:
+    - job: 🕵 Set Version
+      artifacts: true
+  variables:
+    SONAR_PROJECT_KEY: $SONARQUBE_CLOUD_PROJECT_ID
+    SONAR_PROJECT_VERSION: $RELEASE_CANDIDATE_VERSION
+  rules:
+    - if: $IS_ENABLED_SONARQUBE != "true"
+      when: never
+    - if: $CI_COMMIT_TAG
+      when: never
+    - if: $CI_COMMIT_BRANCH == $CI_DEFAULT_BRANCH
+      when: on_success
+    - if: $CI_OPEN_MERGE_REQUESTS
+      when: on_success
+
+
+📍 Publish Version:
+  stage: release
+  rules:
+    - when: on_success
+
+
+🎉 Publish version in vault:
+  stage: release
+  needs:
+    - job: 🕵 Set Version
+    - job: 🌐 publish docker image
+      optional: true
+  variables:
+    PUBLISH_VAULT_VALUE_VARIABLES_NAME: "$PUBLISH_VAULT_VALUE_VARIABLE"
+  rules: !reference [.rule:release:vault, rules]
