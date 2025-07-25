@@ -1,0 +1,10 @@
+---
+include:
+  - local: _rules/release.yml
+  - component: $CI_SERVER_FQDN/pl.rachuna-net/cicd/components/release/versioning@$COMPONENT_VERSION_RELEASE
+    inputs:
+      docker_image: $CONTAINER_IMAGE_SEMANTIC_RELEASE
+
+  - component: $CI_SERVER_FQDN/pl.rachuna-net/cicd/components/release/vault@$COMPONENT_VERSION_RELEASE
+    inputs:
+      docker_image: $CONTAINER_IMAGE_VAULT

@@ -1,0 +1,5 @@
+---
+include:
+  - component: $CI_SERVER_FQDN/pl.rachuna-net/cicd/components/sast/sonarqube@$COMPONENT_VERSION_SAST
+    inputs:
+      docker_image: $CONTAINER_IMAGE_SONAR_SCANNER
