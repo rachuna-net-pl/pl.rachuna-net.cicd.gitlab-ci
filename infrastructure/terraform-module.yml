@@ -1,45 +1,82 @@
 ---
 # -----------------------------------------------------------------------------
-# This is the central CI/CD process for Terraform and Terraform modules.
+# This is the central CI/CD process for Terraform.
 # -----------------------------------------------------------------------------
 default:
   tags:
     - process-ci
 
 include:
-  - local: _configs/_stages.yml
+  - local: _stages/_definitions.yml
   - local: _configs/_workflow.yml
   ### prepare
-  - local: _configs/prepare.yml
+  - local: _stages/prepare.yml
   ### validate
-  - local: _rules/validate.yml
-  - local: _configs/validate.yml
-  # - component: $CI_SERVER_FQDN/pl.rachuna-net/cicd/components/validate/terraform@$COMPONENT_VERSION_VALIDATE
-  - component: $CI_SERVER_FQDN/pl.rachuna-net/cicd/components/validate/terraform@test/1
-    inputs:
-      docker_image: $CONTAINER_IMAGE_TERRAFORM
+  - local: _stages/validate.yml
   ### unit-test
-  - local: _rules/unit-test.yml
-  - component: $CI_SERVER_FQDN/pl.rachuna-net/cicd/components/unit-test/terraform@$COMPONENT_VERSION_UNIT_TEST
-    inputs:
-      docker_image: $CONTAINER_IMAGE_TERRAFORM
   ### sast
-  - local: _configs/sast.yml
+  - local: _stages/sast.yml
   ### release
-  - local: _configs/release.yml
+  - local: _stages/release.yml
 
 
-✅ terraform validate:
-  rules: !reference [.rule:validate:terraform, rules]
+🕵 Set Version:
+  stage: prepare
+  rules:
+    - when: on_success
+
+
+🔍 Input Parameters:
+  stage: prepare
+  rules:
+    - when: on_success
+
+
+🔍 Analyze Conventional Commits:
+  stage: prepare
+  rules:
+    - when: on_success
+
+
+🕵 YAML lint:
+  stage: validate
+  rules: !reference [.rule:validate:yamllint, rules]
 
 
 ✅ tflint:
+  stage: validate
   rules: !reference [.rule:validate:terraform, rules]
 
 
 ✅ terraform-docs:
+  stage: validate
   rules: !reference [.rule:validate:terraform, rules]
 
 
 🕵 terraform fmt:
+  stage: validate
   rules: !reference [.rule:validate:terraform, rules]
+
+
+💪 sonarqube scanner:
+  needs:
+    - job: 🕵 Set Version
+      artifacts: true
+  variables:
+    SONAR_PROJECT_KEY: $SONARQUBE_CLOUD_PROJECT_ID
+    SONAR_PROJECT_VERSION: $RELEASE_CANDIDATE_VERSION
+  rules:
+    - if: $IS_ENABLED_SONARQUBE != "true"
+      when: never
+    - if: $CI_COMMIT_TAG
+      when: never
+    - if: $CI_COMMIT_BRANCH == $CI_DEFAULT_BRANCH
+      when: on_success
+    - if: $CI_OPEN_MERGE_REQUESTS
+      when: on_success
+
+
+📍 Publish Version:
+  stage: release
+  rules:
+    - when: on_success
