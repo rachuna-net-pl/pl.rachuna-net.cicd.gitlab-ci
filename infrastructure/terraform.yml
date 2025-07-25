@@ -7,13 +7,13 @@ default:
     - process-ci
 
 include:
-  - local: _configs/_stages.yml
+  - local: _stages/_definitions.yml
   - local: _configs/_workflow.yml
   ### prepare
-  - local: _configs/prepare.yml
+  - local: _stages/prepare.yml
   ### validate
   - local: _rules/validate.yml
-  - local: _configs/validate.yml
+  - local: _stages/validate.yml
   # - component: $CI_SERVER_FQDN/pl.rachuna-net/cicd/components/validate/terraform@$COMPONENT_VERSION_VALIDATE
   - component: $CI_SERVER_FQDN/pl.rachuna-net/cicd/components/validate/terraform@test/1
     inputs:
@@ -24,9 +24,9 @@ include:
     inputs:
       docker_image: $CONTAINER_IMAGE_TERRAFORM
   ### sast
-  - local: _configs/sast.yml
+  - local: _stages/sast.yml
   ### release
-  - local: _configs/release.yml
+  - local: _stages/release.yml
   ### deploy
   - local: _rules/deploy.yml
   - component: $CI_SERVER_FQDN/pl.rachuna-net/cicd/components/deploy/terraform@$COMPONENT_VERSION_DEPLOY

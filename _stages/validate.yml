@@ -1,6 +1,6 @@
 ---
 include:
   - local: _rules/validate.yml
-  - component: $CI_SERVER_FQDN/pl.rachuna-net/cicd/components/validate/yaml@$COMPONENT_VERSION_VALIDATE
+  - component: $CI_SERVER_FQDN/pl.rachuna-net/cicd/components/validate/yamllint@$COMPONENT_VERSION_VALIDATE
     inputs:
       docker_image: $CONTAINER_IMAGE_PYTHON
