@@ -29,14 +29,14 @@ include:
 
 
 🚀 build container image:
-  needs:
-    - job: 🚀 build container image
-      artifacts: true
-
+  rules:
+    - when: on_success
 
 🌐 publish container image:
   needs:
     - job: 🕵 Set Version
+      artifacts: true
+    - job: 🚀 build container image
       artifacts: true
   variables:
     CONTAINER_VERSION: $RELEASE_CANDIDATE_VERSION

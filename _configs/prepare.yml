@@ -4,7 +4,7 @@ include:
     inputs:
       docker_image: $CONTAINER_IMAGE_PYTHON
 
-  - component: $CI_SERVER_FQDN/pl.rachuna-net/cicd/components/prepare/conventional_commits@feat/217
+  - component: $CI_SERVER_FQDN/pl.rachuna-net/cicd/components/prepare/conventional_commits@$COMPONENT_VERSION_PREPARE
     inputs:
       docker_image: $CONTAINER_IMAGE_PYTHON
 
