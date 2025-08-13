@@ -1,0 +1,63 @@
+---
+# -----------------------------------------------------------------------------
+# GitLab CI configuration for containers image builder.
+# -----------------------------------------------------------------------------
+include:
+  - local: _common.yml
+  - component: $CI_SERVER_FQDN/pl.rachuna-net/cicd/components/validate/contrest@v1.0.0
+    inputs:
+      source_files: "config.yml"
+      namespace_policy: image_builder
+  - component: $CI_SERVER_FQDN/pl.rachuna-net/cicd/components/containers/image-builder@v1.0.0
+  - component: $CI_SERVER_FQDN/pl.rachuna-net/cicd/components/ast/trivy@v1.0.0
+
+
+### validate
+🔬 Validate files (conftest):
+  needs:
+    - job: 🔍 Input Parameters
+    - job: 🔍 Analyze Conventional Commits
+    - job: 🕵 Set Version
+
+### build
+🚀 build container image:
+  needs:
+    - job: 🕵 YAML lint
+      optional: true
+    - job: 🔬 Validate files (conftest)
+    - job: 🕵 Set Version
+      artifacts: true
+  rules:
+    - when: on_success
+
+### publish
+🌐 publish container image:
+  variables:
+    CONTAINER_VERSION: $RELEASE_CANDIDATE_VERSION
+  needs:
+    - job: 🕵 Set Version
+      artifacts: true
+    - job: 🚀 build container image
+      artifacts: true
+  rules:
+    - when: on_success
+
+### integration-test
+🧪 test docker image:
+  variables:
+    CONTAINER_VERSION: $RELEASE_CANDIDATE_VERSION
+  needs:
+    - job: 📍 Publish Version
+      artifacts: true
+    - job: 🌐 publish container image
+      artifacts: true
+
+🔬 trivy (dast):
+  allow_failure: true
+  variables:
+    CONTAINER_TO_ANALYZE: $CI_REGISTRY_IMAGE:$RELEASE_CANDIDATE_VERSION
+  needs:
+    - job: 📍 Publish Version
+      artifacts: true
+    - job: 🌐 publish container image
+      artifacts: true

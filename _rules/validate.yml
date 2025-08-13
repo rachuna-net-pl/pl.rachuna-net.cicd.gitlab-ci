@@ -1,0 +1,13 @@
+---
+.rule:validate:yamllint:
+  rules:
+    - if: $CI_COMMIT_TAG
+      when: never
+    - if: $CI_COMMIT_BRANCH || $CI_MERGE_REQUEST_ID
+      changes:
+        compare_to: 'refs/heads/main'
+        paths:
+          - "**/*.yml"
+          - "**/*.yaml"
+      when: on_success
+    - when: never

@@ -1,0 +1,48 @@
+---
+.rule:deploy:terraform:
+  rules:
+    - if: $PROJECT_TYPE != "terraform"
+      when: never
+    - if: $CI_COMMIT_TAG
+      when: never
+    - if: $CI_COMMIT_BRANCH == $CI_DEFAULT_BRANCH
+      when: on_success
+    - if: $CI_OPEN_MERGE_REQUESTS
+      when: manual
+      allow_failure: false
+
+.rule:deploy:opentofu:
+  rules:
+    - if: $PROJECT_TYPE != "opentofu"
+      when: never
+    - if: $CI_COMMIT_TAG
+      when: never
+    - if: $CI_COMMIT_BRANCH == $CI_DEFAULT_BRANCH
+      when: on_success
+    - if: $CI_OPEN_MERGE_REQUESTS
+      when: manual
+      allow_failure: false
+
+.rule:deploy:gohugo:
+  rules:
+    - if: $PROJECT_TYPE != "docs"
+      when: never
+    - if: $CI_COMMIT_TAG
+      when: never
+    - if: $CI_COMMIT_BRANCH == $CI_DEFAULT_BRANCH
+      when: on_success
+    - if: $CI_OPEN_MERGE_REQUESTS
+      when: manual
+      allow_failure: false
+
+.rule:deploy:ansible:
+  rules:
+    - if: $PROJECT_TYPE != "ansible-playbook"
+      when: never
+    - if: $CI_COMMIT_TAG
+      when: never
+    - if: $CI_COMMIT_BRANCH == $CI_DEFAULT_BRANCH
+      when: on_success
+    - if: $CI_OPEN_MERGE_REQUESTS
+      when: manual
+      allow_failure: false
