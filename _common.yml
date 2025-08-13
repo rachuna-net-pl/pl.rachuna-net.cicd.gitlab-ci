@@ -13,10 +13,17 @@ variables:
   COMPONENT_VERSION_VALIDATE: v1.0.0
   # renovate component_path: pl.rachuna-net/cicd/components/containers
   COMPONENT_VERSION_CONTAINERS: v1.0.0
+  # renovate component_path: pl.rachuna-net/cicd/components/ast
+  COMPONENT_VERSION_AST: v1.0.0
+  # renovate component_path: pl.rachuna-net/cicd/components/infrastructure
+  COMPONENT_VERSION_INFRASTRUCTURE: v1.0.0
   ### CONTAINERS
   CONTAINER_IMAGE_BUILDAH: registry.gitlab.com/pl.rachuna-net/containers/buildah:1.0.0
+  CONTAINER_IMAGE_CONFTEST: registry.gitlab.com/pl.rachuna-net/containers/conftest:1.0.0
+  CONTAINER_IMAGE_OPENTOFU: registry.gitlab.com/pl.rachuna-net/containers/opentofu:1.0.0
   CONTAINER_IMAGE_PYTHON: registry.gitlab.com/pl.rachuna-net/containers/python:2.0.1
   CONTAINER_IMAGE_SEMANTIC_RELEASE: registry.gitlab.com/pl.rachuna-net/containers/semantic-release:2.0.1
+  CONTAINER_IMAGE_TRIVY: registry.gitlab.com/pl.rachuna-net/containers/trivy:1.0.0
 
 
 include:
@@ -37,6 +44,7 @@ include:
   - local: _rules/release.yml
   - component: $CI_SERVER_FQDN/pl.rachuna-net/cicd/components/release/versioning@v1.0.0
   ### deploy
+  - local: _rules/deploy.yml
   ### integration-test
   ### cleanup
 
