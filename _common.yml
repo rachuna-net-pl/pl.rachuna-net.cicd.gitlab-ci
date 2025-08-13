@@ -1,0 +1,59 @@
+---
+default:
+  tags:
+    - process-ci
+
+variables:
+  GIT_SUBMODULE_STRATEGY: recursive
+  LOGO_URL: https://gitlab.com/pl.rachuna-net/cicd/gitlab-ci/-/raw/alpha/_configs/_logo?ref_type=heads
+  ### COMPONENTS
+  # renovate component_path: pl.rachuna-net/cicd/components/prepare
+  COMPONENT_VERSION_PREPARE: v1.0.0
+  # renovate component_path: pl.rachuna-net/cicd/components/validate
+  COMPONENT_VERSION_VALIDATE: v1.0.0
+  # renovate component_path: pl.rachuna-net/cicd/components/containers
+  COMPONENT_VERSION_CONTAINERS: v1.0.0
+  ### CONTAINERS
+  CONTAINER_IMAGE_BUILDAH: registry.gitlab.com/pl.rachuna-net/containers/buildah:1.0.0
+  CONTAINER_IMAGE_PYTHON: registry.gitlab.com/pl.rachuna-net/containers/python:2.0.1
+  CONTAINER_IMAGE_SEMANTIC_RELEASE: registry.gitlab.com/pl.rachuna-net/containers/semantic-release:2.0.1
+
+
+include:
+  - local: _configs/_stages.yml
+  - local: _configs/_workflow.yml
+  ### prepare
+  - component: $CI_SERVER_FQDN/pl.rachuna-net/cicd/components/prepare/input_parameters@v1.0.0
+  - component: $CI_SERVER_FQDN/pl.rachuna-net/cicd/components/prepare/conventional_commits@v1.0.0
+  ### validate
+  - local: _rules/validate.yml
+  - component: $CI_SERVER_FQDN/pl.rachuna-net/cicd/components/validate/yamllint@v1.0.0
+  ### unit-test
+  ### sast
+  ### dast
+  ### build
+  ### publish
+  ### release
+  - local: _rules/release.yml
+  - component: $CI_SERVER_FQDN/pl.rachuna-net/cicd/components/release/versioning@v1.0.0
+  ### deploy
+  ### integration-test
+  ### cleanup
+
+### validate
+🕵 YAML lint:
+  needs:
+    - job: 🔍 Input Parameters
+    - job: 🔍 Analyze Conventional Commits
+    - job: 🕵 Set Version
+  rules: !reference [.rule:validate:yamllint, rules]
+
+### release
+📍 Publish Version:
+  needs:
+    - job: 🔍 Input Parameters
+    - job: 🔍 Analyze Conventional Commits
+    - job: 🕵 YAML lint
+      optional: true
+  rules:
+    - when: on_success
