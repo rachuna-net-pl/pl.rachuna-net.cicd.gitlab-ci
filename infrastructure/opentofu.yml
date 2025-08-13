@@ -1,12 +1,11 @@
 ---
 # -----------------------------------------------------------------------------
-# GitLab CI configuration for opentofu-module.
+# GitLab CI configuration for opentofu.
 # -----------------------------------------------------------------------------
 include:
   - local: _common.yml
   ### opentofu
   - component: $CI_SERVER_FQDN/pl.rachuna-net/cicd/components/infrastructure/opentofu@v1.0.0
-
 
 ### validate
 🕵 opentofu fmt:
@@ -16,8 +15,10 @@ include:
     - job: 🕵 Set Version
 
 ✅ opentofu validate:
-  rules:
-    - when: never
+  needs:
+    - job: 🔍 Input Parameters
+    - job: 🔍 Analyze Conventional Commits
+    - job: 🕵 Set Version
 
 ✅ tflint:
   needs:
@@ -26,28 +27,27 @@ include:
     - job: 🕵 Set Version
 
 ✅ terraform-docs:
-  needs:
-    - job: 🔍 Input Parameters
-    - job: 🔍 Analyze Conventional Commits
-    - job: 🕵 Set Version
+  rules:
+    - when: never
 
 ### unit-test
 🧪 opentofu plan:
+  needs:
+    - job: 🕵 YAML lint
+      optional: true
+    - job: 🕵 opentofu fmt
+    - job: ✅ opentofu validate
+    - job: ✅ tflint
   rules:
-    - when: never
+    - when: on_success
 
 ### release
 📍 Publish Version:
   needs:
-    - job: 🕵 Set Version
-      artifacts: true
-    - job: 🕵 YAML lint
-      optional: true
-    - job: 🕵 opentofu fmt
-    - job: ✅ tflint
-    - job: ✅ terraform-docs
+    - job: 🧪 opentofu plan
 
 ### deploy
 💥 opentofu apply:
-  rules:
-    - when: never
+  needs:
+    - job: 📍 Publish Version
+  rules: !reference [.rule:deploy:opentofu, rules]
