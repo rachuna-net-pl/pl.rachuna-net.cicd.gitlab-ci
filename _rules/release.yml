@@ -1,0 +1,6 @@
+---
+.rule:release:vault:
+  rules:
+    - if: '$CI_COMMIT_BRANCH == $CI_DEFAULT_BRANCH && $PUBLISH_VAULT_SECRET_PATH != null && $PUBLISH_VAULT_VALUE_VARIABLES_NAME != ""'
+      when: on_success
+    - when: never
