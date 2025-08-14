@@ -20,6 +20,7 @@ variables:
   ### CONTAINERS
   CONTAINER_IMAGE_BUILDAH: registry.gitlab.com/pl.rachuna-net/containers/buildah:1.0.0
   CONTAINER_IMAGE_CONFTEST: registry.gitlab.com/pl.rachuna-net/containers/conftest:1.0.0
+  CONTAINER_IMAGE_GOHUGO: registry.gitlab.com/pl.rachuna-net/containers/gohugo:1.1.0
   CONTAINER_IMAGE_OPENTOFU: registry.gitlab.com/pl.rachuna-net/containers/opentofu:1.0.0
   CONTAINER_IMAGE_PYTHON: registry.gitlab.com/pl.rachuna-net/containers/python:2.0.1
   CONTAINER_IMAGE_SEMANTIC_RELEASE: registry.gitlab.com/pl.rachuna-net/containers/semantic-release:2.0.1
