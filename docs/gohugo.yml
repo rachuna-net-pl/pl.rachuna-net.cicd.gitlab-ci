@@ -1,0 +1,43 @@
+---
+# -----------------------------------------------------------------------------
+# GitLab CI configuration for gohugo - gitlab pages.
+# -----------------------------------------------------------------------------
+include:
+  - local: _common.yml
+
+### build
+🚀 build gohugo project:
+  image: $CONTAINER_IMAGE_GOHUGO
+  stage: build
+  script:
+    - npm install
+    - hugo
+  artifacts:
+    paths:
+      - public
+  rules:
+    - when: on_success
+
+### release
+📍 Publish Version:
+  needs:
+    - job: 🔍 Input Parameters
+    - job: 🔍 Analyze Conventional Commits
+  rules:
+    - when: on_success
+
+
+### deploy
+pages:
+  image: $CONTAINER_IMAGE_GOHUGO
+  stage: deploy
+  dependencies:
+    - 📍 Publish Version
+    - 🚀 build gohugo project
+  script:
+    - echo "publish pages"
+  pages: true
+  rules: !reference [.rule:deploy:gohugo, rules]
+  environment:
+    name: Production
+    url: https://$CI_PROJECT_NAMESPACE.gitlab.io/
